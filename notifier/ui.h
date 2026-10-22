@@ -41,6 +41,7 @@ public:
   void MessageHandler(std::shared_ptr<ServiceMessage> p_ServiceMessage);
 
   static void RunKeyDump();
+  static void ShowHelp();
 
 private:
   void InitConfig();

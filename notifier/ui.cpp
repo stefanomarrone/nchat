@@ -210,6 +210,37 @@ void Ui::RunKeyDump()
   std::cout << "keydump not supported by nchat-notify\n";
 }
 
+void Ui::ShowHelp()
+{
+  std::cout <<
+    "nchat-notify is a headless daemon publishing ntfy notifications for new\n"
+    "messages in selected Telegram, WhatsApp and Signal chats.\n"
+    "\n"
+    "Usage: nchat-notify [OPTION]\n"
+    "\n"
+    "Command-line Options:\n"
+    "    -d, --confdir <DIR>    use a different directory than ~/.config/nchat\n"
+    "    -e, --verbose          enable verbose logging\n"
+    "    -ee, --extra-verbose   enable extra verbose logging\n"
+    "    -h, --help             display this help and exit\n"
+    "    -r, --remove           remove chat protocol account\n"
+    "    -s, --setup            set up chat protocol account (interactive)\n"
+    "    -v, --version          output version information and exit\n"
+    "    -x, --export <DIR>     export message cache to specified dir\n"
+    "\n"
+    "Files in confdir:\n"
+    "    notifier.conf          ntfy server, topic, templates and watched chats\n"
+    "    notifier_chats.txt     ids and names of all chats seen, for watch_chats\n"
+    "    notifier_state.txt     newest notified message time per chat\n"
+    "    log.txt                log file\n"
+    "\n"
+    "Without options it runs in the foreground until terminated. Only one\n"
+    "process may use a confdir at a time, so stop the daemon before --setup.\n"
+    "\n"
+    "See doc/NOTIFIER.md for details.\n"
+    "\n";
+}
+
 void Ui::InitConfig()
 {
   const std::map<std::string, std::string> defaultConfig =

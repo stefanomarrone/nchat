@@ -6,8 +6,9 @@ connected to the configured Telegram / WhatsApp / Signal accounts and, when a
 new incoming message arrives in one of a configured set of chats, publishes a
 preconfigured notification to an [ntfy](https://ntfy.sh) topic.
 
-It reuses `src/main.cpp` and the protocol libraries unchanged, replacing the
-ncurses user interface with `notifier/ui.cpp`. It never sends messages, read
+It reuses `src/main.cpp` (only the help text differs, under `NCHAT_NOTIFY`)
+and the protocol libraries unchanged, replacing the ncurses user interface
+with `notifier/ui.cpp`. It never sends messages, read
 receipts or online status, so the accounts behave as if no client was open.
 
 

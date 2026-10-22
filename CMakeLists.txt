@@ -809,6 +809,7 @@ if(HAS_NOTIFIER)
   # Common
   target_common_config(nchat-notify)
   target_compile_definitions(nchat-notify PRIVATE
+                             NCHAT_NOTIFY
                              CMAKE_INSTALL_LIBDIR="${CMAKE_INSTALL_LIBDIR}"
                              GO_VERSION="${GO_VERSION}"
                              GO_VERSION_MIN="${GO_VERSION_MIN}")

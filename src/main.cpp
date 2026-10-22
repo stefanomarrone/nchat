@@ -643,6 +643,9 @@ std::shared_ptr<Protocol> SetupProfile()
 
 void ShowHelp()
 {
+#if defined(NCHAT_NOTIFY)
+  Ui::ShowHelp();
+#else
   std::cout <<
     "nchat is a terminal-based messaging client with Telegram, WhatsApp and Signal support.\n"
     "\n"
@@ -719,6 +722,7 @@ void ShowHelp()
     "\n"
     "Report bugs at https://github.com/d99kris/nchat\n"
     "\n";
+#endif
 }
 
 void ShowVersion()
