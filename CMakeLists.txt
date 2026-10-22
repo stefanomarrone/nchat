@@ -729,6 +729,91 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
 
 endif()
 
+# Notifier Daemon
+option(HAS_NOTIFIER "Notifier daemon (nchat-notify)" ON)
+message(STATUS "Notifier daemon: ${HAS_NOTIFIER}")
+if(HAS_NOTIFIER)
+  # main.cpp includes "ui.h", which resolves to src/ui.h when compiled in place,
+  # so compile a copy outside src/ for it to pick up notifier/ui.h instead.
+  configure_file(src/main.cpp ${CMAKE_CURRENT_BINARY_DIR}/notifier/main.cpp COPYONLY)
+  add_executable(nchat-notify
+    ${CMAKE_CURRENT_BINARY_DIR}/notifier/main.cpp
+    notifier/ntfy.cpp
+    notifier/ntfy.h
+    notifier/ui.cpp
+    notifier/ui.h
+  )
+  install(TARGETS nchat-notify DESTINATION bin)
+
+  # Headers
+  target_include_directories(nchat-notify PRIVATE "notifier")
+  target_include_directories(nchat-notify PRIVATE "lib/common/src")
+  target_include_directories(nchat-notify PRIVATE "lib/ncutil/src")
+
+  # Compiler flags
+  set_target_properties(nchat-notify PROPERTIES COMPILE_FLAGS
+                        "-Wall -Wextra -Wpedantic -Wshadow -Wpointer-arith \
+                         -Wcast-qual -Wno-missing-braces -Wswitch-default \
+                         -Wunreachable-code -Wundef -Wuninitialized \
+                         -Wcast-align")
+
+  # Linking (no ncurses, headless)
+  target_link_libraries(nchat-notify PUBLIC ncutil pthread ${CMAKE_DL_LIBS})
+
+  # Optionals
+  if(HAS_DUMMY)
+    target_include_directories(nchat-notify PRIVATE "lib/duchat/src")
+    target_compile_definitions(nchat-notify PRIVATE HAS_DUMMY="${HAS_DUMMY}")
+    if(NOT HAS_DYNAMICLOAD)
+      target_link_libraries(nchat-notify PUBLIC duchat)
+    endif()
+  endif()
+
+  if(HAS_TELEGRAM)
+    target_include_directories(nchat-notify PRIVATE "lib/tgchat/src")
+    target_compile_definitions(nchat-notify PRIVATE HAS_TELEGRAM="${HAS_TELEGRAM}")
+    if(NOT HAS_DYNAMICLOAD)
+      target_link_libraries(nchat-notify PUBLIC tgchat)
+    endif()
+  endif()
+
+  if(HAS_WHATSAPP)
+    target_include_directories(nchat-notify PRIVATE "lib/wmchat/src")
+    target_compile_definitions(nchat-notify PRIVATE HAS_WHATSAPP="${HAS_WHATSAPP}")
+    if(NOT HAS_DYNAMICLOAD)
+      target_link_libraries(nchat-notify PUBLIC wmchat)
+    endif()
+  endif()
+
+  if(HAS_SIGNAL)
+    target_include_directories(nchat-notify PRIVATE "lib/sgchat/src")
+    target_compile_definitions(nchat-notify PRIVATE HAS_SIGNAL="${HAS_SIGNAL}")
+    if(NOT HAS_DYNAMICLOAD)
+      target_link_libraries(nchat-notify PUBLIC sgchat)
+    endif()
+  endif()
+
+  # Features
+  if(HAS_MULTIPROTOCOL)
+    target_compile_definitions(nchat-notify PRIVATE HAS_MULTIPROTOCOL="${HAS_MULTIPROTOCOL}")
+  endif()
+
+  if(HAS_DYNAMICLOAD)
+    target_compile_definitions(nchat-notify PRIVATE HAS_DYNAMICLOAD="${HAS_DYNAMICLOAD}")
+  endif()
+
+  if(HAS_COREDUMP)
+    target_compile_definitions(nchat-notify PRIVATE HAS_COREDUMP="${HAS_COREDUMP}")
+  endif()
+
+  # Common
+  target_common_config(nchat-notify)
+  target_compile_definitions(nchat-notify PRIVATE
+                             CMAKE_INSTALL_LIBDIR="${CMAKE_INSTALL_LIBDIR}"
+                             GO_VERSION="${GO_VERSION}"
+                             GO_VERSION_MIN="${GO_VERSION_MIN}")
+endif()
+
 # Tests
 option(HAS_TESTS "Build tests" ON)
 message(STATUS "Tests: ${HAS_TESTS}")
@@ -753,7 +838,7 @@ if(HAS_WHATSAPP AND HAS_SIGNAL)
   # Order the check after every end product. Depending on nchat alone is not
   # enough - in a dynamic-load build it does not depend on the protocol libraries,
   # so the check would then run in the middle of the build output.
-  foreach(NCHAT_TARGET nchat devnchat duchat tgchat wmchat sgchat)
+  foreach(NCHAT_TARGET nchat devnchat nchat-notify duchat tgchat wmchat sgchat)
     if(TARGET ${NCHAT_TARGET})
       add_dependencies(checkgodeps ${NCHAT_TARGET})
     endif()

@@ -1,0 +1,43 @@
+# nchat-notify systemd unit, see doc/NOTIFIER.md
+#
+# Install:
+#   sudo useradd --system --home-dir /var/lib/nchat-notify --shell /usr/sbin/nologin nchat
+#   sudo cp notifier/nchat-notify.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now nchat-notify
+
+[Unit]
+Description=nchat-notify - ntfy notifications for new chat messages
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=nchat
+Group=nchat
+ExecStart=/usr/local/bin/nchat-notify --confdir /var/lib/nchat-notify
+StandardInput=null
+Restart=on-failure
+RestartSec=30
+# allow pending notifications to be flushed on stop
+TimeoutStopSec=60
+
+# state (profiles, config, message cache) lives in /var/lib/nchat-notify
+StateDirectory=nchat-notify
+StateDirectoryMode=0700
+UMask=0077
+
+# hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target
