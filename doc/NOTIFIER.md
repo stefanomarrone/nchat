@@ -53,7 +53,8 @@ running setup.
 Configuration
 -------------
 
-`notifier.conf` in the confdir is created with defaults on first start:
+`notifier.conf` in the confdir is created with defaults on first start (see
+`doc/notifier.conf.example` for a commented example):
 
 | Parameter             | Default           | Description                                         |
 |-----------------------|-------------------|-----------------------------------------------------|
