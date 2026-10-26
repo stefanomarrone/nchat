@@ -1,0 +1,39 @@
+# Example notifier.conf for nchat-notify, see doc/NOTIFIER.md
+#
+# Copy to notifier.conf in the confdir (e.g. /var/lib/nchat-notify) and
+# restart the daemon after changes. Lines starting with # are ignored.
+
+# --- ntfy server ---
+ntfy_server=https://ntfy.sh
+# topics on ntfy.sh are public: use a long name that is hard to guess
+ntfy_topic=nchat-example-7f3k9q2x
+# only needed when the server / topic requires authentication
+ntfy_token=
+ntfy_timeout_sec=15
+
+# --- notification content ---
+# placeholders: %chat% %chatid% %sender% %text% %profile% %protocol%
+notify_title=%chat% (%protocol%)
+# without %text% no message content is sent to the ntfy server
+notify_message=New message from %sender%
+# 1 (min) - 5 (max)
+notify_priority=4
+notify_tags=speech_balloon
+# url opened when the notification is tapped (optional)
+notify_click=
+# at most one notification per chat within this interval
+notify_cooldown_sec=60
+
+# --- watched chats ---
+# comma-separated ids from the first column of notifier_chats.txt, as
+# profileid:chatid, a bare chatid (any profile) or * (all chats).
+# The ids below are placeholders, take the real ones from notifier_chats.txt.
+watch_chats=Telegram_+390000000000:-1001234567890,WhatsAppMd_+390000000000:390000000001@s.whatsapp.net
+
+# messages missed while stopped are notified only if newer than this (24h)
+catchup_max_age_sec=86400
+
+# --- status notifications (login failure, session loss) ---
+status_notify=1
+# separate topic for status notifications, empty uses ntfy_topic
+status_topic=
